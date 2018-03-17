@@ -4,6 +4,7 @@ package com.dewpoint.rts.mapper;
 import com.dewpoint.rts.model.Candidate;
 import com.dewpoint.rts.service.*;
 import com.dewpoint.rts.util.ApiConstants;
+import com.dewpoint.rts.util.ApplicationStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -29,6 +30,7 @@ public class CandidateMapper {
         candidate.setClientState(candidateRequestDTO.getClientState());
         candidate.setClientZip(candidateRequestDTO.getClientZip());
         candidate.setCreatedBy(ApiConstants.CREATED_USER);
+        candidate.setStatus(ApplicationStatus.NEVER_INTERVIEWED.getKey());
         //candidate.setCreatedBy(principal.getName());
         candidate.setCreatedOn(new Date());
         return candidate;
@@ -91,6 +93,9 @@ public class CandidateMapper {
             candidate.setBillRate(candidateRequestDTO.getBillRate());
         }
 
+        if(!StringUtils.isEmpty(candidateRequestDTO.getApplicationStatus())) {
+            candidate.setStatus(candidateRequestDTO.getApplicationStatus());
+        }
         candidate.setModifiedBy(ApiConstants.UPDATED_USER);
        // candidate.setModifiedBy(principal.getName());
         candidate.setModifiedOn(new Date());

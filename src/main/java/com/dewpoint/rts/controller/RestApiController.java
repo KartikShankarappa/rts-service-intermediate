@@ -1,18 +1,19 @@
 package com.dewpoint.rts.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
 
 import com.dewpoint.rts.service.CandidateSearchService;
 import com.dewpoint.rts.service.*;
 import com.dewpoint.rts.util.ApiValidation;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,10 +67,14 @@ public class RestApiController {
 	}
 
 	@ApiOperation(value = "Retrieves candidate recent resume (in any format)")
-	@RequestMapping(value = "/candidates/{candidateId}/resume", method = RequestMethod.GET)
-	public @ResponseBody byte[] retrieveResume() throws IOException {
-		final InputStream in = getClass().getResourceAsStream("/mytest1.pdf");
-		return IOUtils.toByteArray(in);
+	@RequestMapping(value = "/candidates/resume?candidateId={candidateId}", method = RequestMethod.GET)
+	public @ResponseBody
+	ResponseEntity<InputStreamResource> retrieveResume(@RequestParam("candidateId") String candidateId) throws Exception {
+		File resumeFile  = candidateSearchService.identifyFile(candidateId);
+		String mediaType = candidateSearchService.determineMediaTypeFromFile(resumeFile);
+		return ResponseEntity.status(HttpStatus.OK)
+				.contentType(MediaType.parseMediaType(mediaType))
+				.body(new InputStreamResource(new FileInputStream(resumeFile)));
 	}
 
 	@ApiOperation(value = "Retrieves all candidates (non indexed data)")

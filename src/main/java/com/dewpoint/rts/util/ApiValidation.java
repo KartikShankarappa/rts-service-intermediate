@@ -74,7 +74,9 @@ public class ApiValidation {
     }
 
     public static void validateSearchCandidatesRequest(CandidateSearchRequestDTO requestDTO){
-        if(requestDTO == null || requestDTO.getResumeKeywords() == null || requestDTO.getSkills() == null) {
+        if(requestDTO == null || (requestDTO.getResumeKeywords() == null
+                && requestDTO.getSkills() == null
+                && requestDTO.getStatus() == null)) {
             throwException("Please supply correct search criteria");
         }
     }
