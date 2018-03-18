@@ -1,6 +1,10 @@
 package com.dewpoint.rts.service;
 
 import com.dewpoint.rts.dao.CandidateDao;
+import com.dewpoint.rts.dto.CandidateDTO;
+import com.dewpoint.rts.dto.CandidateRequestDTO;
+import com.dewpoint.rts.dto.CandidateResponseDTO;
+import com.dewpoint.rts.dto.CandidateSearchRequestDTO;
 import com.dewpoint.rts.mapper.CandidateMapper;
 import com.dewpoint.rts.model.Candidate;
 import org.springframework.stereotype.Component;

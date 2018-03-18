@@ -17,6 +17,6 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-public class LuceneDocumentSearch {
+public class LuceneDocumentSearchService {
     // will fill in today
 }

@@ -1,9 +1,9 @@
 package com.dewpoint.rts.mapper;
 
 
+import com.dewpoint.rts.dto.CandidateDTO;
+import com.dewpoint.rts.dto.CandidateRequestDTO;
 import com.dewpoint.rts.model.Candidate;
-import com.dewpoint.rts.service.CandidateDTO;
-import com.dewpoint.rts.service.CandidateRequestDTO;
 import com.dewpoint.rts.util.ApiConstants;
 import com.dewpoint.rts.util.ApplicationStatus;
 import org.springframework.stereotype.Component;

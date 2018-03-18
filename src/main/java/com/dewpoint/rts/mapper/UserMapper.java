@@ -1,8 +1,8 @@
 package com.dewpoint.rts.mapper;
 
+import com.dewpoint.rts.dto.UserDTO;
+import com.dewpoint.rts.dto.UserRequestDTO;
 import com.dewpoint.rts.model.User;
-import com.dewpoint.rts.service.UserDTO;
-import com.dewpoint.rts.service.UserRequestDTO;
 import com.dewpoint.rts.util.ApiConstants;
 import org.springframework.stereotype.Component;
 

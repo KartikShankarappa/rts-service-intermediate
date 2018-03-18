@@ -1,5 +1,11 @@
 package com.dewpoint.rts.util;
 
+import com.dewpoint.rts.dto.CandidateRequestDTO;
+import com.dewpoint.rts.dto.CandidateResponseDTO;
+import com.dewpoint.rts.dto.CandidateSearchRequestDTO;
+import com.dewpoint.rts.dto.CandidateSearchResponseDTO;
+import com.dewpoint.rts.dto.UserRequestDTO;
+import com.dewpoint.rts.dto.UserResponseDTO;
 import com.dewpoint.rts.errorconfig.ApiOperationException;
 import com.dewpoint.rts.service.*;
 

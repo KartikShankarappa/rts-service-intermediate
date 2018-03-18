@@ -1,4 +1,4 @@
-package com.dewpoint.rts.service;
+package com.dewpoint.rts.dto;
 
 import java.util.List;
 

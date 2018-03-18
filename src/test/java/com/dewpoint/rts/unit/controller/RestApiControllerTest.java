@@ -19,17 +19,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.dewpoint.rts.controller.RestApiController;
-import com.dewpoint.rts.service.CandidateDTO;
-import com.dewpoint.rts.service.CandidateRequestDTO;
-import com.dewpoint.rts.service.CandidateResponseDTO;
-import com.dewpoint.rts.service.CandidateSearchRequestDTO;
-import com.dewpoint.rts.service.CandidateSearchResponseDTO;
+import com.dewpoint.rts.dto.CandidateDTO;
+import com.dewpoint.rts.dto.CandidateRequestDTO;
+import com.dewpoint.rts.dto.CandidateResponseDTO;
+import com.dewpoint.rts.dto.CandidateSearchRequestDTO;
+import com.dewpoint.rts.dto.CandidateSearchResponseDTO;
+import com.dewpoint.rts.dto.CandidateSummaryDTO;
+import com.dewpoint.rts.dto.UserDTO;
+import com.dewpoint.rts.dto.UserRequestDTO;
+import com.dewpoint.rts.dto.UserResponseDTO;
 import com.dewpoint.rts.service.CandidateSearchService;
 import com.dewpoint.rts.service.CandidateService;
-import com.dewpoint.rts.service.CandidateSummaryDTO;
-import com.dewpoint.rts.service.UserDTO;
-import com.dewpoint.rts.service.UserRequestDTO;
-import com.dewpoint.rts.service.UserResponseDTO;
 import com.dewpoint.rts.service.UserService;
 
 @RunWith(MockitoJUnitRunner.class)

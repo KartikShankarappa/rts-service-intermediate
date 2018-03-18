@@ -1,5 +1,10 @@
 package com.dewpoint.rts.service;
 
+import com.dewpoint.rts.dto.CandidateDTO;
+import com.dewpoint.rts.dto.CandidateResponseDTO;
+import com.dewpoint.rts.dto.CandidateSearchRequestDTO;
+import com.dewpoint.rts.dto.CandidateSearchResponseDTO;
+import com.dewpoint.rts.dto.CandidateSummaryDTO;
 import com.dewpoint.rts.errorconfig.ApiOperationException;
 import com.dewpoint.rts.model.Candidate;
 import org.apache.lucene.search.Query;
