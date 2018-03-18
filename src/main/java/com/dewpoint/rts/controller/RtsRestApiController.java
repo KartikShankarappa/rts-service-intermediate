@@ -24,9 +24,9 @@ import java.util.logging.Logger;
 @Api(value="RTS", description="Operations pertaining to Resume Tracking System (RTS).")
 @RestController
 @RequestMapping("/v1/")
-public class RestApiController {
+public class RtsRestApiController {
 
-	public static final Logger logger = Logger.getLogger("RestApiController");
+	public static final Logger logger = Logger.getLogger("RtsRestApiController");
 
 	@Autowired
 	private CandidateSearchService candidateSearchService;

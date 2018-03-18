@@ -6,7 +6,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.dewpoint.rts.controller.RestApiController;
+import com.dewpoint.rts.controller.RtsRestApiController;
 import com.dewpoint.rts.dto.CandidateDTO;
 import com.dewpoint.rts.dto.CandidateRequestDTO;
 import com.dewpoint.rts.dto.CandidateResponseDTO;
@@ -33,7 +32,7 @@ import com.dewpoint.rts.service.CandidateService;
 import com.dewpoint.rts.service.UserService;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RestApiControllerTest {
+public class RtsRestApiControllerTest {
 	
 	@Mock
 	private CandidateSearchService candidateSearchServiceMock;
@@ -42,7 +41,7 @@ public class RestApiControllerTest {
 	@Mock
 	private CandidateService candidateServiceMock;
 	@InjectMocks
-	private RestApiController controller;
+	private RtsRestApiController controller;
 
 	@Test
 	public void retrieveAllUsersTest() {
