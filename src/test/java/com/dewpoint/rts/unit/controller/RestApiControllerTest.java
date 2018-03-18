@@ -95,21 +95,6 @@ public class RestApiControllerTest {
 	}
 	
 	@Test
-	public void updateUserTest() {
-		UserRequestDTO userRequestDTO = new UserRequestDTO();
-		userRequestDTO.setUserFullName("John Doe");
-		userRequestDTO.setRole("admin");
-		userRequestDTO.setUserId("johndoe");
-		userRequestDTO.setPassword("welcome");
-		
-		doNothing().when(userServiceMock).updateUser(userRequestDTO);
-		
-		ResponseEntity<?> response = controller.updateUser(userRequestDTO);
-		
-		assertEquals(HttpStatus.OK, response.getStatusCode());
-	}
-	
-	@Test
 	public void retrieveAllCandidatesTest() throws Exception {
 		CandidateDTO candidateDTO1 = new CandidateDTO();
 		candidateDTO1.setFirstName("John");
@@ -201,6 +186,7 @@ public class RestApiControllerTest {
 	public void searchCandidatesTest() {
 		CandidateSearchRequestDTO candidateSearchRequestDTO = new CandidateSearchRequestDTO();
 		candidateSearchRequestDTO.setStatus("Available");
+		candidateSearchRequestDTO.setResumeKeywords("Java");
 		CandidateSummaryDTO candidateSummaryDTO1 = new CandidateSummaryDTO();
 		candidateSummaryDTO1.setFirstName("John");
 		candidateSummaryDTO1.setLastName("Snow");
@@ -240,6 +226,7 @@ public class RestApiControllerTest {
 	public void searchCandidates_NoIndexing_NullResponse_Test() {
 		CandidateSearchRequestDTO candidateSearchRequestDTO = new CandidateSearchRequestDTO();
 		candidateSearchRequestDTO.setStatus("Available");
+		candidateSearchRequestDTO.setResumeKeywords("Java");
 		CandidateDTO candidateDTO1 = new CandidateDTO();
 		candidateDTO1.setFirstName("John");
 		candidateDTO1.setLastName("Snow");
