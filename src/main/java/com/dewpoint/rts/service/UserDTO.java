@@ -7,6 +7,7 @@ public class UserDTO {
     private String userFullName;
     private String userId;
     private String role;
+    private String status;
     private String createdBy;
     private Date createdOn;
     private String lastModifiedBy;
@@ -34,6 +35,14 @@ public class UserDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getCreatedBy() {
@@ -74,6 +83,7 @@ public class UserDTO {
                 "userFullName='" + userFullName + '\'' +
                 ", userId='" + userId + '\'' +
                 ", role='" + role + '\'' +
+                ", status='" + status + '\'' +
                 ", createdBy='" + createdBy + '\'' +
                 ", createdOn=" + createdOn +
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +

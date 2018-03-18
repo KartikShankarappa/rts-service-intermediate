@@ -107,7 +107,7 @@ public class DatabaseConfig {
     }
 
     private List<MediaType> getSupportedMediaTypes() {
-        List<MediaType> list = new ArrayList<MediaType>();
+        List<MediaType> list = new ArrayList<>();
         list.add(MediaType.IMAGE_JPEG);
         list.add(MediaType.APPLICATION_PDF);
         list.add(MediaType.TEXT_PLAIN);

@@ -2,7 +2,8 @@ package com.dewpoint.rts.mapper;
 
 
 import com.dewpoint.rts.model.Candidate;
-import com.dewpoint.rts.service.*;
+import com.dewpoint.rts.service.CandidateDTO;
+import com.dewpoint.rts.service.CandidateRequestDTO;
 import com.dewpoint.rts.util.ApiConstants;
 import com.dewpoint.rts.util.ApplicationStatus;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,6 @@ import java.util.Date;
 public class CandidateMapper {
 
     public Candidate formatCreateEntry(CandidateRequestDTO candidateRequestDTO, Principal principal) {
-        Principal pp= null;
         Candidate candidate = new Candidate();
         candidate.setFirstName(candidateRequestDTO.getFirstName());
         candidate.setLastName(candidateRequestDTO.getLastName());
@@ -30,8 +30,10 @@ public class CandidateMapper {
         candidate.setClientState(candidateRequestDTO.getClientState());
         candidate.setClientZip(candidateRequestDTO.getClientZip());
         candidate.setCreatedBy(ApiConstants.CREATED_USER);
-        candidate.setStatus(ApplicationStatus.NEVER_INTERVIEWED.getKey());
         //candidate.setCreatedBy(principal.getName());
+        candidate.setStatus(ApplicationStatus.NEVER_INTERVIEWED.getKey());
+        // below field is internal and in future if website is open for end candidates to update their profile, this can be leveraged
+        candidate.setCandidateId(candidateRequestDTO.getFirstName() + "_" + candidateRequestDTO.getLastName());
         candidate.setCreatedOn(new Date());
         return candidate;
     }

@@ -35,7 +35,7 @@ public class ApiValidation {
 
     public static void validateUpdateUserRequest(UserRequestDTO requestDTO){
         if(requestDTO == null || requestDTO.getUserId() == null || requestDTO.getPassword() == null) {
-            throwException("Please supply unique user id.");
+            throwException("Please supply user id and password.");
         }
     }
 
@@ -47,7 +47,7 @@ public class ApiValidation {
 
     public static void validateSearchCandidateRequest(String candidateId){
         if(candidateId == null || candidateId.isEmpty()) {
-            throwException("Please supply candidate id (email).");
+            throwException("Please supply candidate id");
         }
     }
 
@@ -67,16 +67,16 @@ public class ApiValidation {
 
     public static void validateUpdateCandidateRequest(CandidateRequestDTO requestDTO){
         if(requestDTO == null
-                || requestDTO.getEmail() == null
-                || requestDTO.getSkills() == null) {
-            throwException("Please supply mandatory email field value and any other fields to update existing candidate profile.");
+                || requestDTO.getFirstName() == null
+                || requestDTO.getLastName() == null) {
+            throwException("Please supply mandatory first and last name field values and any other fields to update existing candidate profile.");
         }
     }
 
     public static void validateSearchCandidatesRequest(CandidateSearchRequestDTO requestDTO){
-        if(requestDTO == null || (requestDTO.getResumeKeywords() == null
-                && requestDTO.getSkills() == null
-                && requestDTO.getStatus() == null)) {
+        if(requestDTO == null
+                || (requestDTO.getResumeKeywords() == null
+                       && requestDTO.getSkills() == null)) {
             throwException("Please supply correct search criteria");
         }
     }

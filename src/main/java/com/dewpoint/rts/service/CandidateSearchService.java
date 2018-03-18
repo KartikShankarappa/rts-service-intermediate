@@ -1,17 +1,5 @@
 package com.dewpoint.rts.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.activation.MimetypesFileTypeMap;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
-
 import com.dewpoint.rts.errorconfig.ApiOperationException;
 import com.dewpoint.rts.model.Candidate;
 import org.apache.lucene.search.Query;
@@ -20,9 +8,18 @@ import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.transaction.Transactional;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -60,15 +57,36 @@ public class CandidateSearchService {
     public CandidateSearchResponseDTO searchForCandidates(CandidateSearchRequestDTO searchRequestDTO) {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Candidate.class).get();
-        Query luceneQuery = qb.keyword()
-                                .fuzzy()
-                                .withEditDistanceUpTo(1)
-                                .withPrefixLength(1)
-                                .onFields("clientName")
-                                .matching(searchRequestDTO.getClientName())
-                                .createQuery();
+        String searchWords = searchRequestDTO.getStatus() + " " + searchRequestDTO.getSource() + " "
+                + searchRequestDTO.getClientName() + " " + searchRequestDTO.getClientCity() + " " + searchRequestDTO.getClientState()
+                + " " + searchRequestDTO.getClientZip();
 
-        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Candidate.class);
+
+//        Query luceneResumeQuery = qb.keyword();
+
+//        Query luceneSkillsQuery = qb.keyword()
+//                .onFields("skills")
+//                .matching(searchRequestDTO.getSkills().toLowerCase())
+//                .createQuery();
+
+//        Query luceneOptionalQuery = qb.keyword()
+//                .wildcard()
+//                .onFields("status", "source", "email", "clientName", "clientCity", "clientState", "clientZip")
+//                .matching(searchWords.toLowerCase())
+//                .createQuery();
+//
+//        Query combinedQuery = qb
+//                .bool()
+//                .should( luceneSkillsQuery )
+//                .should( luceneOptionalQuery )
+//                .createQuery();
+
+        Query luceneSkillsQuery = qb.keyword()
+                .onFields("clientName")
+                .matching(searchRequestDTO.getClientName().toLowerCase())
+                .createQuery();
+
+        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneSkillsQuery, Candidate.class);
 
         List<Candidate> candidateList = new ArrayList<>();
         try {
@@ -113,7 +131,7 @@ public class CandidateSearchService {
         candidateDTO.setLastName(candidate.getLastName());
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(documentURL);
-        candidateDTO.setResumeLink(uriComponentsBuilder.buildAndExpand(candidate.getEmail()).toString());
+        candidateDTO.setResumeLink(uriComponentsBuilder.buildAndExpand(candidate.getCandidateId()).toString());
         return candidateDTO;
     }
 
@@ -124,29 +142,26 @@ public class CandidateSearchService {
         candidateDTO.setFirstName(candidate.getFirstName());
         candidateDTO.setLastName(candidate.getLastName());
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(documentURL);
-        candidateDTO.setResumeLink(uriComponentsBuilder.buildAndExpand(candidate.getEmail()).toString());
+        candidateDTO.setResumeLink(uriComponentsBuilder.buildAndExpand(candidate.getFirstName() + "_" + candidate.getLastName()).toString());
         return candidateDTO;
     }
 
-    public File identifyFile(String email) throws Exception {
-        String resumeName = searchForCandidateResume(email);
-        if(resumeName == null || resumeName.isEmpty()) {
-            throw new ApiOperationException("Missing Resume for candidate " + email + ". Please upload candidate resume.");
+    public File identifyFile(String candidateId) {
+        String resumeName = searchForCandidateResume(candidateId);
+        if (resumeName == null || resumeName.isEmpty()) {
+            throw new ApiOperationException("Missing Resume for candidate " + candidateId + ". Please upload candidate resume.");
         }
 
         return new File(documentLocation + resumeName);
     }
 
     @Transactional
-    public String searchForCandidateResume(String email) {
+    public String searchForCandidateResume(String candidateId) {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Candidate.class).get();
         Query luceneQuery = qb.keyword()
-                .fuzzy()
-                .withEditDistanceUpTo(1)
-                .withPrefixLength(1)
-                .onFields("email")
-                .matching(email)
+                .onField("candidateId")
+                .matching(candidateId.toLowerCase())
                 .createQuery();
 
         javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Candidate.class);
@@ -159,13 +174,18 @@ public class CandidateSearchService {
         }
 
         // handle multiple resumes scenario
-       Candidate candidate = candidateList.get(0);
-
-        return candidate.getFirstName() + "_" + candidate.getLastName();
+        Candidate candidate = candidateList.get(0);
+        return candidate.getCandidateId();
     }
 
     public String determineMediaTypeFromFile(File file){
-         MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-        return mimeTypesMap.getContentType(file);
+//        //REVISIT THIS AS MimetypesFileTypeMap causing issue on Mac
+//        try {
+//            MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+//            return mimeTypesMap.getContentType(file);
+//        } catch (Exception e) {
+//            return MediaType.APPLICATION_PDF_VALUE;
+//        }
+        return MediaType.APPLICATION_PDF_VALUE;
     }
 }

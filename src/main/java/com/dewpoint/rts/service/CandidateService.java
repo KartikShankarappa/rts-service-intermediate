@@ -53,7 +53,7 @@ public class CandidateService {
     public CandidateResponseDTO searchCandidates(String candidateId) {
         CandidateResponseDTO response = new CandidateResponseDTO();
         Map<String, String> params = new HashMap<>();
-        params.put("email", candidateId + "%");
+        params.put("candidateId", candidateId);
         List<Candidate> candidates = this.candidateDao.findByNamedQueryAndNamedParams("Candidate.findSpecific", params);
 
         if(!candidates.isEmpty()) {

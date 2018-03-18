@@ -18,6 +18,7 @@ public class UserMapper {
         user.setRole(userDTO.getRole());
         user.setPassword(ApiConstants.DEFAULT_INITIAL_PASSWORD);
         user.setUserId(userDTO.getUserId());
+        user.setStatus(ApiConstants.USER_STATUS_ACTIVE);
       //  user.setCreatedBy(principal.getName());
         user.setCreatedBy(ApiConstants.CREATED_USER);
         user.setCreatedOn(new Date());
@@ -31,8 +32,15 @@ public class UserMapper {
     }
 
     public User formatUpdateEntry(User user, Principal principal) {
-        user.setUserId(user.getUserId());
      //   user.setModifiedBy(principal.getName());
+        user.setModifiedBy(ApiConstants.UPDATED_USER);
+        user.setModifiedOn(new Date());
+        return user;
+    }
+
+    public User formatDeleteEntry(User user, Principal principal) {
+        user.setStatus(ApiConstants.USER_STATUS_INACTIVE);
+        //   user.setModifiedBy(principal.getName());
         user.setModifiedBy(ApiConstants.UPDATED_USER);
         user.setModifiedOn(new Date());
         return user;
@@ -42,6 +50,7 @@ public class UserMapper {
         UserDTO userDTO = new UserDTO();
         userDTO.setUserFullName(user.getFullName());
         userDTO.setRole(user.getRole());
+        userDTO.setStatus(user.getStatus());
         userDTO.setUserId(user.getUserId());
         userDTO.setCreatedBy(user.getCreatedBy());
         userDTO.setCreatedOn(user.getCreatedOn());

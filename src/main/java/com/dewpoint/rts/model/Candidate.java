@@ -1,9 +1,9 @@
 package com.dewpoint.rts.model;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
+import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.snowball.SnowballPorterFilterFactory;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.hibernate.search.annotations.*;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -18,8 +18,17 @@ import static org.hibernate.search.annotations.Index.YES;
  * 
  */
 @Indexed
+@AnalyzerDef(name = "rtsanalyzer",
+		tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
+		filters = {
+				@TokenFilterDef(factory = LowerCaseFilterFactory.class),
+				@TokenFilterDef(factory = SnowballPorterFilterFactory.class)
+		})
 @Entity
-@NamedQuery(name="Candidate.findAll", query="SELECT c FROM Candidate c")
+@NamedQueries({
+		@NamedQuery(name = "Candidate.findAll", query = "SELECT c FROM Candidate c"),
+		@NamedQuery(name = "Candidate.findSpecific", query = "SELECT c FROM Candidate c where c.candidateId = :candidateId")
+})
 public class Candidate implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -30,19 +39,28 @@ public class Candidate implements Serializable {
 	@Column(name="bill_rate")
 	private BigDecimal billRate;
 
+    @Field(index=YES, analyze= Analyze.YES, store= Store.YES)
+    @Analyzer(definition = "rtsanalyzer")
+    @Column(name="candidate_id")
+    private String candidateId;
+
 	@Field(index=YES, analyze= Analyze.YES, store= Store.YES)
+	@Analyzer(definition = "rtsanalyzer")
 	@Column(name="client_city")
 	private String clientCity;
 
 	@Field(index=YES, analyze= Analyze.YES, store= Store.YES)
+	@Analyzer(definition = "rtsanalyzer")
 	@Column(name="client_name")
 	private String clientName;
 
 	@Field(index=YES, analyze= Analyze.YES, store= Store.YES)
+	@Analyzer(definition = "rtsanalyzer")
 	@Column(name="client_state")
 	private String clientState;
 
 	@Field(index=YES, analyze= Analyze.YES, store= Store.YES)
+	@Analyzer(definition = "rtsanalyzer")
 	@Column(name="client_zip")
 	private String clientZip;
 
@@ -82,12 +100,15 @@ public class Candidate implements Serializable {
 	private String phoneNumber;
 
 	@Field(index=YES, analyze= Analyze.YES, store= Store.YES)
+	@Analyzer(definition = "rtsanalyzer")
 	private String skills;
 
 	@Field(index=YES, analyze= Analyze.YES, store= Store.YES)
+	@Analyzer(definition = "rtsanalyzer")
 	private String source;
 
 	@Field(index=YES, analyze= Analyze.YES, store= Store.YES)
+	@Analyzer(definition = "rtsanalyzer")
 	private String status;
 
 	public Candidate() {
@@ -109,7 +130,15 @@ public class Candidate implements Serializable {
 		this.billRate = billRate;
 	}
 
-	public String getClientCity() {
+    public String getCandidateId() {
+        return candidateId;
+    }
+
+    public void setCandidateId(String candidateId) {
+        this.candidateId = candidateId;
+    }
+
+    public String getClientCity() {
 		return this.clientCity;
 	}
 

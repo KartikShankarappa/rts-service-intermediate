@@ -45,6 +45,8 @@ public class User implements Serializable {
 	@Column(name="user_id")
 	private String userId;
 
+	private String status;
+
 	public User() {
 	}
 
@@ -110,6 +112,14 @@ public class User implements Serializable {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getUserId() {
