@@ -2,9 +2,11 @@ package com.dewpoint.rts.unit.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,6 +93,46 @@ public class RestApiControllerTest {
 		doNothing().when(userServiceMock).createUser(userRequestDTO);
 		
 		ResponseEntity<?> response = controller.createUser(userRequestDTO);
+		
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+	}
+	
+	@Test
+	public void resetUserPasswordTest() {
+		doNothing().when(userServiceMock).resetUserPassword(any(UserRequestDTO.class));
+		
+		ResponseEntity<?> response = controller.resetUserPassword("johndoe");
+		
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+	}
+	
+	@Test
+	public void resetUserStatusTest() {
+		doNothing().when(userServiceMock).resetUserStatus(any(UserRequestDTO.class));
+		
+		ResponseEntity<?> response = controller.resetUserStatus("johndoe");
+		
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+	}
+	
+	@Test
+	public void changeUserPasswordTest() {
+		UserRequestDTO userRequestDTO = new UserRequestDTO();
+		userRequestDTO.setUserId("johndoe");
+		userRequestDTO.setPassword("welcome");
+		doNothing().when(userServiceMock).updateUser(any(UserRequestDTO.class));
+		
+		ResponseEntity<?> response = controller.changeUserPassword(userRequestDTO);
+		
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+	}
+	
+	@Test
+	public void deleteUserTest() {
+		doNothing().when(userServiceMock).deleteUser(any(UserRequestDTO.class));
+		
+		ResponseEntity<?> response = controller.deleteUser("johndoe");
+		
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 	}
 	
