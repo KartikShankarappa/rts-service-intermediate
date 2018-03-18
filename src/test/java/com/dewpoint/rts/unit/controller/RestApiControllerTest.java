@@ -1,4 +1,4 @@
-package com.dewpoint.rts.unit;
+package com.dewpoint.rts.unit.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
