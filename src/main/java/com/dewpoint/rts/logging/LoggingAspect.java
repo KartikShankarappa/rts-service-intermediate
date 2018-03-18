@@ -6,27 +6,34 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StopWatch.TaskInfo;
 
 import java.util.Arrays;
 
+@Configuration
 @Aspect
 public class LoggingAspect {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+//    /**
+//     * Pointcut that matches all repositories, services and REST endpoints
+//     */
+//    @Pointcut("within(@org.springframework.stereotype.Repository *)" +
+//            " || within(@org.springframework.stereotype.Service *)" +
+//            " || within(@org.springframework.stereotype.Component *)" +
+//            " || within(@org.springframework.web.bind.annotation.RestController *)")
+
     /**
-     * Pointcut that matches all repositories, services and REST endpoints
+     * Pointcut that matches com.dewpoint.rts package and sub packages only
      */
-    @Pointcut("within(@org.springframework.stereotype.Repository *)" +
-            " || within(@org.springframework.stereotype.Service *)" +
-            " || within(@org.springframework.stereotype.Component *)" +
-            " || within(@org.springframework.web.bind.annotation.RestController *)")
+    @Pointcut("within(com.dewpoint.rts..*)")
     public void customSpringBeanPointcut() {
     }
 
-     @Around("customSpringBeanPointcut()")
+    @Around("customSpringBeanPointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch();
 

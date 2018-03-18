@@ -54,8 +54,14 @@ public class UserService {
 		return response;
 	}
 
-	public void createUser(UserRequestDTO userDTO) {
-		User user = userMapper.formatCreateEntry(userDTO, null);
+	public void createUser(UserRequestDTO userRequestDTO) {
+		User searchUser = userMapper.formatSearchEntry(userRequestDTO);
+		List<User> users = this.userDao.findByEntity(searchUser);
+		if(users != null && !users.isEmpty() && users.size() > 0) {
+			throw new ApiOperationException("Invalid request to create user profile as id " + userRequestDTO.getUserId() + "already exists in the system.");
+		}
+
+		User user = userMapper.formatCreateEntry(userRequestDTO, null);
 		this.userDao.create(user);
 	}
 
@@ -93,7 +99,11 @@ public class UserService {
 		}
 
 		User user = userMapper.formatUpdateEntry(users.get(0), null);
-     	// Below happens when Admin is resetting to initial default password
+     	if(user.getPassword().equalsIgnoreCase(ApiConstants.DEFAULT_INITIAL_PASSWORD)){
+			throw new ApiOperationException("Unable to perform operation as user id " + userRequestDTO.getUserId() +" was reset with default password already.");
+		}
+
+		// Below happens when Admin is resetting to initial default password
 		user.setPassword(ApiConstants.DEFAULT_INITIAL_PASSWORD);
 		this.userDao.update(user);
 	}

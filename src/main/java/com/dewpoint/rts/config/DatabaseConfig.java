@@ -3,6 +3,7 @@ package com.dewpoint.rts.config;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -95,15 +96,11 @@ public class DatabaseConfig {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(byteArrayHttpMessageConverter());
-    }
-
     @Bean
-    public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
+    public HttpMessageConverters customConverters() {
         ByteArrayHttpMessageConverter arrayHttpMessageConverter = new ByteArrayHttpMessageConverter();
         arrayHttpMessageConverter.setSupportedMediaTypes(getSupportedMediaTypes());
-        return arrayHttpMessageConverter;
+        return new HttpMessageConverters(arrayHttpMessageConverter);
     }
 
     private List<MediaType> getSupportedMediaTypes() {

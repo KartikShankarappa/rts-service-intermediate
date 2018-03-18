@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.logging.Logger;
 
-@Api(value="RTS", description="Operations pertaining to RTS")
+@Api(value="RTS", description="Operations pertaining to Resume Tracking System (RTS).")
 @RestController
 @RequestMapping("/v1/")
 public class RestApiController {
