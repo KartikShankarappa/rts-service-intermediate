@@ -123,7 +123,7 @@ public class UserService {
 			throw new ApiOperationException("Unable to perform operation as user id " + user.getUserId() + " is in active status already.");
 		}
 
-		// Below happens when Admin is resetting to initial default password
+		// Below happens when Admin is resetting the status
 		user.setStatus(ApiConstants.USER_STATUS_ACTIVE);
 		this.userDao.update(user);
 	}
