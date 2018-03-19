@@ -1,7 +1,9 @@
 package com.dewpoint.rts.controller;
 
 import com.dewpoint.rts.dto.*;
-import com.dewpoint.rts.service.*;
+import com.dewpoint.rts.service.CandidateSearchService;
+import com.dewpoint.rts.service.CandidateService;
+import com.dewpoint.rts.service.UserService;
 import com.dewpoint.rts.util.ApiConstants;
 import com.dewpoint.rts.util.ApiValidation;
 import io.swagger.annotations.Api;
@@ -16,12 +18,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.Principal;
-import java.util.Collections;
-import java.util.Map;
 import java.util.logging.Logger;
 
 @Api(value="RTS", description="Operations pertaining to Resume Tracking System (RTS).")
@@ -40,17 +39,6 @@ public class RtsRestApiController {
 
 	@Autowired
 	private CandidateService candidateService;
-
-	@RequestMapping(value = "/auth/token", method = RequestMethod.GET)
-	public Map<String, Object> getToken(HttpSession session) {
-		return Collections.singletonMap("session", session.getId());
-	}
-
-//	@RequestMapping(value = "/auth/manage", method = RequestMethod.GET)
-////	@Secured(ApiConstants.ROLE_ADMINISTRATOR)
-//	Map<String, Object> manage(@AuthenticationPrincipal Principal user) {
-//		return Collections.singletonMap("user", user.getName());
-//	}
 
 	@ApiOperation(value = "Returns all users (Active and InActive)")
 	@Secured(ApiConstants.ROLE_ADMINISTRATOR)

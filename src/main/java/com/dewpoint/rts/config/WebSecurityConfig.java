@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/rts-service/v1/**")
+                .antMatchers("/v1**")
                 .hasAnyRole(ApiConstants.ROLE_ADMINISTRATOR, ApiConstants.ROLE_USER)
                 .and().httpBasic().realmName(ApiConstants.APPLICATION_REALM)
                 .authenticationEntryPoint(authenticationService);
@@ -36,7 +35,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        auth.userDetailsService(userSecurityService).passwordEncoder(passwordEncoder);
+        auth.userDetailsService(userSecurityService);
     }
 }

@@ -19,8 +19,7 @@ public class UserMapper {
         user.setPassword(ApiConstants.DEFAULT_INITIAL_PASSWORD);
         user.setUserId(userDTO.getUserId());
         user.setStatus(ApiConstants.USER_STATUS_ACTIVE);
-      //  user.setCreatedBy(principal.getName());
-        user.setCreatedBy(ApiConstants.CREATED_USER);
+        user.setCreatedBy(principal.getName());
         user.setCreatedOn(new Date());
         return user;
     }
@@ -32,16 +31,14 @@ public class UserMapper {
     }
 
     public User formatUpdateEntry(User user, Principal principal) {
-     //   user.setModifiedBy(principal.getName());
-        user.setModifiedBy(ApiConstants.UPDATED_USER);
+        user.setModifiedBy(principal.getName());
         user.setModifiedOn(new Date());
         return user;
     }
 
     public User formatDeleteEntry(User user, Principal principal) {
         user.setStatus(ApiConstants.USER_STATUS_INACTIVE);
-        //   user.setModifiedBy(principal.getName());
-        user.setModifiedBy(ApiConstants.UPDATED_USER);
+        user.setModifiedBy(principal.getName());
         user.setModifiedOn(new Date());
         return user;
     }

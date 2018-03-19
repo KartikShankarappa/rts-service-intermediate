@@ -13,6 +13,8 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -52,10 +54,6 @@ public class DatabaseConfig {
         ds.addDataSourceProperty("url", "jdbc:mysql://localhost:3306/rts");
         ds.addDataSourceProperty("user", "root");
         ds.addDataSourceProperty("password", "Welcome1");
-//        ds.addDataSourceProperty("cachePrepStmts", true);
-//        ds.addDataSourceProperty("prepStmtCacheSize", 250);
-//        ds.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
-//        ds.addDataSourceProperty("useServerPrepStmts", true);
         return ds;
     }
 
@@ -63,7 +61,6 @@ public class DatabaseConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource());
-//        entityManagerFactoryBean.setPackagesToScan(new String[]{env.getProperty("entitymanager.packagesToScan")});
         entityManagerFactoryBean.setPackagesToScan(new String[]{"com.dewpoint.rts.model"});
 
 
@@ -110,4 +107,9 @@ public class DatabaseConfig {
         list.add(MediaType.APPLICATION_OCTET_STREAM);
         return list;
     }
-}
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder(9);
+    }
+ }

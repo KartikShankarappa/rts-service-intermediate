@@ -1,10 +1,5 @@
 package com.dewpoint.rts.service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.dewpoint.rts.dao.UserDao;
 import com.dewpoint.rts.errorconfig.ApiOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserSecurityService implements UserDetailsService {
@@ -32,7 +32,7 @@ public class UserSecurityService implements UserDetailsService {
         }
 
         GrantedAuthority authority = new SimpleGrantedAuthority(users.get(0).getRole());
-        UserDetails userDetails = (UserDetails)new User(users.get(0).getUserId(), users.get(0).getPassword(), Arrays.asList(authority));
+        UserDetails userDetails = new User(users.get(0).getUserId(), users.get(0).getPassword(), Arrays.asList(authority));
         return userDetails;
     }
 }

@@ -1,8 +1,10 @@
 package com.dewpoint.rts.config;
 
 import com.dewpoint.rts.util.ApiConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -24,18 +26,19 @@ import java.util.List;
 @EnableSwagger2
 public class DocumentationConfig {
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Bean
     public Docket api() {
         List<Parameter> listParams = new ArrayList<>();
         listParams.add(parameterBasicAuthorization());
-        listParams.add(parameterXAuthorization());
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.dewpoint.rts.controller"))
                 .paths(PathSelectors.ant("/v1/**"))
                 .build()
-                //  .pathMapping("/v1/**")
                 .directModelSubstitute(LocalDateTime.class, String.class)
                 .globalOperationParameters(listParams)
                 .apiInfo(apiInfo());
@@ -51,22 +54,16 @@ public class DocumentationConfig {
                 "License of API", "API license URL", Collections.emptyList());
     }
 
+
     private Parameter parameterBasicAuthorization(){
-        String usernamePass = ApiConstants.API_ADMIN_USER + ":" + ApiConstants.API_ADMIN_USER_PWD;
-        String basicAuth = "Basic " + Base64.getEncoder().encodeToString(usernamePass.getBytes());
+        String usernamePass =  ApiConstants.API_ADMIN_USER + ":" + ApiConstants.API_ADMIN_USER_PWD;
+        String basicAuth = "Basic " + passwordEncoder.encode(usernamePass);
         return new ParameterBuilder().name("Authorization")
                 .description("Basic authorization header")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")
-                .required(false).defaultValue(basicAuth).build();
-    }
-
-    private Parameter parameterXAuthorization(){
-        return new ParameterBuilder().name("X-Authorization")
-                .description("X-authorization header")
-                .modelRef(new ModelRef("string"))
-                .parameterType("header")
                 .required(false)
+                .defaultValue(basicAuth)
                 .build();
     }
 }

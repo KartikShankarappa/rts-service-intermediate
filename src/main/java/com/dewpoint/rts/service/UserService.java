@@ -8,6 +8,7 @@ import com.dewpoint.rts.errorconfig.ApiOperationException;
 import com.dewpoint.rts.mapper.UserMapper;
 import com.dewpoint.rts.model.User;
 import com.dewpoint.rts.util.ApiConstants;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
@@ -21,10 +22,12 @@ public class UserService {
 
 	private UserMapper userMapper;
 	private UserDao userDao;
+	private PasswordEncoder passwordEncoder;
 
-	public UserService(UserDao userDao, UserMapper userMapper) {
+	public UserService(UserDao userDao, UserMapper userMapper, PasswordEncoder passwordEncoder) {
 		this.userDao = userDao;
 		this.userMapper = userMapper;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	public UserResponseDTO searchUsers(String userId) {
@@ -66,6 +69,7 @@ public class UserService {
 		}
 
 		User user = userMapper.formatCreateEntry(userRequestDTO, principal);
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		this.userDao.create(user);
 	}
 
@@ -80,7 +84,7 @@ public class UserService {
 		// Below happens when user is changing initial default password
 		if(userRequestDTO.getPassword() != null
 				&& !userRequestDTO.getPassword().isEmpty()) {
-			user.setPassword(userRequestDTO.getPassword());
+			user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
 		}
 
 		// Future needs to allow change to role, full name
@@ -103,12 +107,12 @@ public class UserService {
 		}
 
 		User user = userMapper.formatUpdateEntry(users.get(0), principal);
-		if(user.getPassword().equalsIgnoreCase(ApiConstants.DEFAULT_INITIAL_PASSWORD)){
+		if(passwordEncoder.matches(ApiConstants.DEFAULT_INITIAL_PASSWORD, user.getPassword())){
 			throw new ApiOperationException("Unable to perform operation as user id " + userRequestDTO.getUserId() +" was reset with default password already.");
 		}
 
 		// Below happens when Admin is resetting to initial default password
-		user.setPassword(ApiConstants.DEFAULT_INITIAL_PASSWORD);
+		user.setPassword(passwordEncoder.encode(ApiConstants.DEFAULT_INITIAL_PASSWORD));
 		this.userDao.update(user);
 	}
 
