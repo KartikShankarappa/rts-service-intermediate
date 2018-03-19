@@ -1,12 +1,8 @@
 package com.dewpoint.rts.controller;
 
-import com.dewpoint.rts.dto.CandidateRequestDTO;
-import com.dewpoint.rts.dto.CandidateResponseDTO;
-import com.dewpoint.rts.dto.CandidateSearchRequestDTO;
-import com.dewpoint.rts.dto.CandidateSearchResponseDTO;
-import com.dewpoint.rts.dto.UserRequestDTO;
-import com.dewpoint.rts.dto.UserResponseDTO;
+import com.dewpoint.rts.dto.*;
 import com.dewpoint.rts.service.*;
+import com.dewpoint.rts.util.ApiConstants;
 import com.dewpoint.rts.util.ApiValidation;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,18 +11,26 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @Api(value="RTS", description="Operations pertaining to Resume Tracking System (RTS).")
 @RestController
 @RequestMapping("/v1/")
+@PreAuthorize("hasAnyAuthority('" + ApiConstants.ROLE_ADMINISTRATOR + "','" + ApiConstants.ROLE_USER + "')")
 public class RtsRestApiController {
 
-	public static final Logger logger = Logger.getLogger("RtsRestApiController");
+	public static final Logger logger = Logger.getLogger("RestApiController");
 
 	@Autowired
 	private CandidateSearchService candidateSearchService;
@@ -37,7 +41,19 @@ public class RtsRestApiController {
 	@Autowired
 	private CandidateService candidateService;
 
+	@RequestMapping(value = "/auth/token", method = RequestMethod.GET)
+	public Map<String, Object> getToken(HttpSession session) {
+		return Collections.singletonMap("session", session.getId());
+	}
+
+//	@RequestMapping(value = "/auth/manage", method = RequestMethod.GET)
+////	@Secured(ApiConstants.ROLE_ADMINISTRATOR)
+//	Map<String, Object> manage(@AuthenticationPrincipal Principal user) {
+//		return Collections.singletonMap("user", user.getName());
+//	}
+
 	@ApiOperation(value = "Returns all users (Active and InActive)")
+	@Secured(ApiConstants.ROLE_ADMINISTRATOR)
 	@RequestMapping(value = "/users", method = RequestMethod.GET)
 	public ResponseEntity<UserResponseDTO> retrieveAllUsers() {
 		UserResponseDTO response = userService.retrieveAllUsers();
@@ -46,6 +62,7 @@ public class RtsRestApiController {
 	}
 
 	@ApiOperation(value = "Return all users based on userid based search")
+	@Secured(ApiConstants.ROLE_ADMINISTRATOR)
 	@RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
 	public ResponseEntity<UserResponseDTO> searchUser(@PathVariable("userId") String userId) {
 		ApiValidation.validateSearchUserRequest(userId);
@@ -55,48 +72,53 @@ public class RtsRestApiController {
 	}
 
 	@ApiOperation(value = "Creates a new user")
+	@Secured(ApiConstants.ROLE_ADMINISTRATOR)
 	@RequestMapping(value = "/users", method = RequestMethod.POST)
-	public ResponseEntity<String> createUser(@RequestBody UserRequestDTO requestDTO) {
+	public ResponseEntity<String> createUser(@RequestBody UserRequestDTO requestDTO, @AuthenticationPrincipal Principal user) {
 		ApiValidation.validateCreateUserRequest(requestDTO);
-	    userService.createUser(requestDTO);
+		userService.createUser(requestDTO, user);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Reset user password")
+	@Secured(ApiConstants.ROLE_ADMINISTRATOR)
 	@RequestMapping(value = "/users/{userId}/reset", method = RequestMethod.PUT)
-	public ResponseEntity<String> resetUserPassword(@PathVariable("userId") String userId) {
+	public ResponseEntity<String> resetUserPassword(@PathVariable("userId") String userId, @AuthenticationPrincipal Principal user) {
 		ApiValidation.validateSearchUserRequest(userId);
 		UserRequestDTO requestDTO = new UserRequestDTO();
 		requestDTO.setUserId(userId);
-		userService.resetUserPassword(requestDTO);
+		userService.resetUserPassword(requestDTO, user);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Reset user status (make inactive profile to active profile again)")
+	@Secured(ApiConstants.ROLE_ADMINISTRATOR)
 	@RequestMapping(value = "/users/{userId}/activate", method = RequestMethod.PUT)
-	public ResponseEntity<String> resetUserStatus(@PathVariable("userId") String userId) {
+	public ResponseEntity<String> resetUserStatus(@PathVariable("userId") String userId, @AuthenticationPrincipal Principal user) {
 		ApiValidation.validateSearchUserRequest(userId);
 		UserRequestDTO requestDTO = new UserRequestDTO();
 		requestDTO.setUserId(userId);
-		userService.resetUserStatus(requestDTO);
+		userService.resetUserStatus(requestDTO, user);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Change default user password")
+	@Secured({ApiConstants.ROLE_ADMINISTRATOR, ApiConstants.ROLE_USER})
 	@RequestMapping(value = "/users", method = RequestMethod.PUT)
-	public ResponseEntity<String> changeUserPassword(@RequestBody UserRequestDTO requestDTO) {
+	public ResponseEntity<String> changeUserPassword(@RequestBody UserRequestDTO requestDTO, @AuthenticationPrincipal Principal user) {
 		ApiValidation.validateUpdateUserRequest(requestDTO);
-		userService.updateUser(requestDTO);
+		userService.updateUser(requestDTO, user);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Inactivate user profile")
+	@Secured(ApiConstants.ROLE_ADMINISTRATOR)
 	@RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> deleteUser(@PathVariable("userId") String userId) {
+	public ResponseEntity<String> deleteUser(@PathVariable("userId") String userId, @AuthenticationPrincipal Principal user) {
 		ApiValidation.validateSearchUserRequest(userId);
 		UserRequestDTO requestDTO = new UserRequestDTO();
 		requestDTO.setUserId(userId);
-		userService.deleteUser(requestDTO);
+		userService.deleteUser(requestDTO, user);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -152,8 +174,8 @@ public class RtsRestApiController {
 		CandidateSearchResponseDTO responseDTO = candidateSearchService.searchForCandidates(requestDTO);
 		// if no index records found, search database (This works as Cache hit or Cache miss scenario). Mostly below call will never be used.
 		if(responseDTO == null || responseDTO.getCandidates() == null || responseDTO.getCandidates().size() == 0) {
-			 CandidateResponseDTO dbResponse = candidateService.searchCandidates(requestDTO);
-			 responseDTO = candidateSearchService.searchForCandidates(dbResponse);
+			CandidateResponseDTO dbResponse = candidateService.searchCandidates(requestDTO);
+			responseDTO = candidateSearchService.searchForCandidates(dbResponse);
 		}
 		ApiValidation.validateSearchCandidatesResponse(responseDTO);
 		return new ResponseEntity<>(responseDTO, HttpStatus.OK);

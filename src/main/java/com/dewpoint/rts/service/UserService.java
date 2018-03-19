@@ -10,6 +10,7 @@ import com.dewpoint.rts.model.User;
 import com.dewpoint.rts.util.ApiConstants;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,25 +58,25 @@ public class UserService {
 		return response;
 	}
 
-	public void createUser(UserRequestDTO userRequestDTO) {
+	public void createUser(UserRequestDTO userRequestDTO, Principal principal) {
 		User searchUser = userMapper.formatSearchEntry(userRequestDTO);
 		List<User> users = this.userDao.findByEntity(searchUser);
 		if(users != null && !users.isEmpty() && users.size() > 0) {
 			throw new ApiOperationException("Invalid request to create user profile as id " + userRequestDTO.getUserId() + "already exists in the system.");
 		}
 
-		User user = userMapper.formatCreateEntry(userRequestDTO, null);
+		User user = userMapper.formatCreateEntry(userRequestDTO, principal);
 		this.userDao.create(user);
 	}
 
-	public void updateUser(UserRequestDTO userRequestDTO) {
+	public void updateUser(UserRequestDTO userRequestDTO, Principal principal) {
 		User searchUser = userMapper.formatSearchEntry(userRequestDTO);
 		List<User> users = this.userDao.findByEntity(searchUser);
 		if(users == null || users.isEmpty() || users.size() == 0) {
 			throw new ApiOperationException("Invalid request to reset password for user with id " + userRequestDTO.getUserId());
 		}
 
-		User user = userMapper.formatUpdateEntry(users.get(0), null);
+		User user = userMapper.formatUpdateEntry(users.get(0), principal);
 		// Below happens when user is changing initial default password
 		if(userRequestDTO.getPassword() != null
 				&& !userRequestDTO.getPassword().isEmpty()) {
@@ -94,15 +95,15 @@ public class UserService {
 		this.userDao.update(user);
 	}
 
-	public void resetUserPassword(UserRequestDTO userRequestDTO) {
+	public void resetUserPassword(UserRequestDTO userRequestDTO, Principal principal) {
 		User searchUser = userMapper.formatSearchEntry(userRequestDTO);
 		List<User> users = this.userDao.findByEntity(searchUser);
 		if(users == null || users.isEmpty() || users.size() == 0) {
 			throw new ApiOperationException("Invalid request to reset password for user with id " + userRequestDTO.getUserId());
 		}
 
-		User user = userMapper.formatUpdateEntry(users.get(0), null);
-     	if(user.getPassword().equalsIgnoreCase(ApiConstants.DEFAULT_INITIAL_PASSWORD)){
+		User user = userMapper.formatUpdateEntry(users.get(0), principal);
+		if(user.getPassword().equalsIgnoreCase(ApiConstants.DEFAULT_INITIAL_PASSWORD)){
 			throw new ApiOperationException("Unable to perform operation as user id " + userRequestDTO.getUserId() +" was reset with default password already.");
 		}
 
@@ -111,28 +112,28 @@ public class UserService {
 		this.userDao.update(user);
 	}
 
-	public void resetUserStatus(UserRequestDTO userRequestDTO) {
+	public void resetUserStatus(UserRequestDTO userRequestDTO, Principal principal) {
 		User searchUser = userMapper.formatSearchEntry(userRequestDTO);
 		List<User> users = this.userDao.findByEntity(searchUser);
 		if(users == null || users.isEmpty() || users.size() == 0) {
 			throw new ApiOperationException("Invalid request to reset user status for id " + userRequestDTO.getUserId());
 		}
 
-		User user = userMapper.formatUpdateEntry(users.get(0), null);
+		User user = userMapper.formatUpdateEntry(users.get(0), principal);
 		if(ApiConstants.USER_STATUS_ACTIVE.equalsIgnoreCase(user.getStatus())){
 			throw new ApiOperationException("Unable to perform operation as user id " + user.getUserId() + " is in active status already.");
 		}
 
-		// Below happens when Admin is resetting the status
+		// Below happens when Admin is resetting to initial default password
 		user.setStatus(ApiConstants.USER_STATUS_ACTIVE);
 		this.userDao.update(user);
 	}
 
-	public void deleteUser(UserRequestDTO userRequestDTO) {
-	    User searchUser = userMapper.formatSearchEntry(userRequestDTO);
+	public void deleteUser(UserRequestDTO userRequestDTO, Principal principal) {
+		User searchUser = userMapper.formatSearchEntry(userRequestDTO);
 		List<User> users = this.userDao.findByEntity(searchUser);
 		if(users == null || users.isEmpty() || users.size() == 0) {
-		    throw new ApiOperationException("Invalid request to delete user with id " + userRequestDTO.getUserId());
+			throw new ApiOperationException("Invalid request to delete user with id " + userRequestDTO.getUserId());
 		}
 
 		User user = users.get(0);
@@ -140,7 +141,7 @@ public class UserService {
 			throw new ApiOperationException("Unable to perform operation as user id " + user.getUserId() + " is in inactive status already.");
 		}
 
-		User deleteUser = userMapper.formatDeleteEntry(user, null);
+		User deleteUser = userMapper.formatDeleteEntry(user, principal);
 		this.userDao.update(deleteUser);
 	}
 }
