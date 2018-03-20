@@ -1,4 +1,4 @@
-package com.dewpoint.rts.service;
+package com.dewpoint.rts.unit.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
@@ -25,6 +25,7 @@ import com.dewpoint.rts.dto.UserResponseDTO;
 import com.dewpoint.rts.errorconfig.ApiOperationException;
 import com.dewpoint.rts.mapper.UserMapper;
 import com.dewpoint.rts.model.User;
+import com.dewpoint.rts.service.UserService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
