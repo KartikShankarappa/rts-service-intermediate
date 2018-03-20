@@ -12,12 +12,12 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.dewpoint.rts.dao.UserDao;
 import com.dewpoint.rts.dto.UserRequestDTO;
@@ -31,15 +31,14 @@ public class UserServiceTest {
 
 	@Mock
 	private UserDao userDaoMock;
-	
 	@Mock
 	private UserMapper userMapperMock;
-	
 	@InjectMocks
 	private UserService userService;
-
 	@Mock
-	Principal principal;
+	private Principal principalMock;
+	@Mock
+	private PasswordEncoder passwordEncoderMock;
 	
 	@Test
 	public void searchUsersTest() {
@@ -81,7 +80,6 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	@Ignore
 	public void createUserTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -91,15 +89,14 @@ public class UserServiceTest {
 		
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(null);
-		when(userMapperMock.formatCreateEntry(userRequestDTO, null)).thenCallRealMethod();
+		when(userMapperMock.formatCreateEntry(userRequestDTO, principalMock)).thenCallRealMethod();
 		
-		userService.createUser(userRequestDTO, principal);
+		userService.createUser(userRequestDTO, principalMock);
 		
 		verify(userDaoMock, times(1)).create(any(User.class));
 	}
 	
 	@Test(expected = ApiOperationException.class)
-	@Ignore
 	public void createUser_ExistingUserExceptionTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -114,11 +111,10 @@ public class UserServiceTest {
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(users);
 		
-		userService.createUser(userRequestDTO, principal);
+		userService.createUser(userRequestDTO, principalMock);
 	}
 	
 	@Test
-	@Ignore
 	public void updateUserTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -132,15 +128,14 @@ public class UserServiceTest {
 		
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(users);
-		when(userMapperMock.formatUpdateEntry(user, null)).thenCallRealMethod();
+		when(userMapperMock.formatUpdateEntry(user, principalMock)).thenCallRealMethod();
 		
-		userService.updateUser(userRequestDTO, principal);
+		userService.updateUser(userRequestDTO, principalMock);
 		
 		verify(userDaoMock, times(1)).update(any(User.class));
 	}
 	
 	@Test(expected = ApiOperationException.class)
-	@Ignore
 	public void updateUser_noUserFoundExceptionTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -155,11 +150,10 @@ public class UserServiceTest {
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(null);
 		
-		userService.updateUser(userRequestDTO, principal);
+		userService.updateUser(userRequestDTO, principalMock);
 	}
 	
 	@Test
-	@Ignore
 	public void resetUserPassword() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -174,15 +168,14 @@ public class UserServiceTest {
 		
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(users);
-		when(userMapperMock.formatUpdateEntry(user, null)).thenCallRealMethod();
+		when(userMapperMock.formatUpdateEntry(user, principalMock)).thenCallRealMethod();
 		
-		userService.resetUserPassword(userRequestDTO, principal);
+		userService.resetUserPassword(userRequestDTO, principalMock);
 		
 		verify(userDaoMock, times(1)).update(any(User.class));
 	}
 	
 	@Test(expected = ApiOperationException.class)
-	@Ignore
 	public void resetUserPassword_ExceptionTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -193,11 +186,10 @@ public class UserServiceTest {
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(null);
 		
-		userService.resetUserPassword(userRequestDTO, principal);
+		userService.resetUserPassword(userRequestDTO, principalMock);
 	}
 	
 	@Test
-	@Ignore
 	public void resetUserPassword_noUserFoundExceptionTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -209,14 +201,13 @@ public class UserServiceTest {
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(null);
 		
 		try {
-			userService.resetUserPassword(userRequestDTO, principal);
+			userService.resetUserPassword(userRequestDTO, principalMock);
 		} catch(ApiOperationException exception) {
 			assertEquals("Invalid request to reset password for user with id " + userRequestDTO.getUserId(), exception.getMessage());
 		}
 	}
 	
 	@Test
-	@Ignore
 	public void resetUserPassword_defaulPasswordAlreadySetForThisUserExceptionTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -231,17 +222,16 @@ public class UserServiceTest {
 		
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(users);
-		when(userMapperMock.formatUpdateEntry(user, null)).thenCallRealMethod();
+		when(userMapperMock.formatUpdateEntry(user, principalMock)).thenCallRealMethod();
 		
 		try {
-			userService.resetUserPassword(userRequestDTO, principal);
+			userService.resetUserPassword(userRequestDTO, principalMock);
 		} catch(ApiOperationException exception) {
 			assertEquals("Unable to perform operation as user id " + userRequestDTO.getUserId() +" was reset with default password already.", exception.getMessage());
 		}
 	}
 	
 	@Test
-	@Ignore
 	public void resetUserStatus() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -257,15 +247,14 @@ public class UserServiceTest {
 		
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(users);
-		when(userMapperMock.formatUpdateEntry(user, null)).thenCallRealMethod();
+		when(userMapperMock.formatUpdateEntry(user, principalMock)).thenCallRealMethod();
 		
-		userService.resetUserStatus(userRequestDTO, principal);
+		userService.resetUserStatus(userRequestDTO, principalMock);
 		
 		verify(userDaoMock, times(1)).update(any(User.class));
 	}
 	
 	@Test(expected = ApiOperationException.class)
-	@Ignore
 	public void resetUserStatus_ExceptionTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -276,11 +265,10 @@ public class UserServiceTest {
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(null);
 		
-		userService.resetUserStatus(userRequestDTO, principal);
+		userService.resetUserStatus(userRequestDTO, principalMock);
 	}
 	
 	@Test
-	@Ignore
 	public void resetUserStatus_noUserFoundExceptionTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -292,14 +280,13 @@ public class UserServiceTest {
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(null);
 		
 		try {
-			userService.resetUserStatus(userRequestDTO, principal);
+			userService.resetUserStatus(userRequestDTO, principalMock);
 		} catch(ApiOperationException exception) {
 			assertEquals("Invalid request to reset user status for id " + userRequestDTO.getUserId(), exception.getMessage());
 		}
 	}
 	
 	@Test
-	@Ignore
 	public void resetUserStatus_defaulStatusAlreadySetForThisUserExceptionTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -315,10 +302,10 @@ public class UserServiceTest {
 		
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(users);
-		when(userMapperMock.formatUpdateEntry(user, null)).thenCallRealMethod();
+		when(userMapperMock.formatUpdateEntry(user, principalMock)).thenCallRealMethod();
 		
 		try {
-			userService.resetUserStatus(userRequestDTO, principal);
+			userService.resetUserStatus(userRequestDTO, principalMock);
 		} catch(ApiOperationException exception) {
 			assertEquals("Unable to perform operation as user id " + user.getUserId() + " is in active status already.", exception.getMessage());
 		}
@@ -338,15 +325,14 @@ public class UserServiceTest {
 		
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(users);
-		when(userMapperMock.formatDeleteEntry(user, null)).thenCallRealMethod();
+		when(userMapperMock.formatDeleteEntry(user, principalMock)).thenCallRealMethod();
 		
-		userService.deleteUser(userRequestDTO, principal);
+		userService.deleteUser(userRequestDTO, principalMock);
 		
 		verify(userDaoMock, times(1)).update(any(User.class));
 	}
 	
 	@Test(expected = ApiOperationException.class)
-	@Ignore
 	public void deleteUser_ExceptionTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("Harvey Spector");
@@ -356,7 +342,7 @@ public class UserServiceTest {
 		when(userMapperMock.formatSearchEntry(userRequestDTO)).thenCallRealMethod();
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(null);
 		
-		userService.deleteUser(userRequestDTO, principal);
+		userService.deleteUser(userRequestDTO, principalMock);
 	}
 	
 	@Test
@@ -370,14 +356,13 @@ public class UserServiceTest {
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(null);
 		
 		try {
-			userService.deleteUser(userRequestDTO, principal);
+			userService.deleteUser(userRequestDTO, principalMock);
 		} catch(ApiOperationException exception) {
 			assertEquals("Invalid request to delete user with id " + userRequestDTO.getUserId(), exception.getMessage());
 		}
 	}
 	
 	@Test
-	@Ignore
 	public void deleteUser_userAlreadyInActiveExceptionTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("Harvey Spector");
@@ -393,7 +378,7 @@ public class UserServiceTest {
 		when(userDaoMock.findByEntity(any(User.class))).thenReturn(users);
 		
 		try {
-			userService.deleteUser(userRequestDTO, principal);
+			userService.deleteUser(userRequestDTO, principalMock);
 		} catch(ApiOperationException exception) {
 			assertEquals("Unable to perform operation as user id " + user.getUserId() + " is in inactive status already.", exception.getMessage());
 		}

@@ -2,7 +2,6 @@ package com.dewpoint.rts.unit.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
 
@@ -10,7 +9,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -42,10 +40,10 @@ public class RtsRestApiControllerTest {
 	private UserService userServiceMock;
 	@Mock
 	private CandidateService candidateServiceMock;
+	@Mock
+	private Principal principalMock;
 	@InjectMocks
 	private RtsRestApiController controller;
-	@Mock
-	Principal principal;
 
 	@Test
 	public void retrieveAllUsersTest() {
@@ -86,7 +84,6 @@ public class RtsRestApiControllerTest {
 	}
 	
 	@Test
-	@Ignore
 	public void createUserTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserFullName("John Doe");
@@ -94,52 +91,66 @@ public class RtsRestApiControllerTest {
 		userRequestDTO.setUserId("johndoe");
 		userRequestDTO.setPassword("welcome");
 		
-		doNothing().when(userServiceMock).createUser(userRequestDTO, principal);
+		doNothing().when(userServiceMock).createUser(userRequestDTO, principalMock);
 		
-		ResponseEntity<?> response = controller.createUser(userRequestDTO, principal);
+		ResponseEntity<?> response = controller.createUser(userRequestDTO, principalMock);
 		
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 	}
 	
 	@Test
-	@Ignore
 	public void resetUserPasswordTest() {
-		doNothing().when(userServiceMock).resetUserPassword(any(UserRequestDTO.class), principal);
+		UserRequestDTO userRequestDTO = new UserRequestDTO();
+		userRequestDTO.setUserFullName("John Doe");
+		userRequestDTO.setRole("admin");
+		userRequestDTO.setUserId("johndoe");
+		userRequestDTO.setPassword("welcome");
 		
-		ResponseEntity<?> response = controller.resetUserPassword("johndoe", principal);
+		doNothing().when(userServiceMock).resetUserPassword(userRequestDTO, principalMock);
+		
+		ResponseEntity<?> response = controller.resetUserPassword("johndoe", principalMock);
 		
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 	}
 	
 	@Test
-	@Ignore
 	public void resetUserStatusTest() {
-		doNothing().when(userServiceMock).resetUserStatus(any(UserRequestDTO.class), principal);
+		UserRequestDTO userRequestDTO = new UserRequestDTO();
+		userRequestDTO.setUserFullName("John Doe");
+		userRequestDTO.setRole("admin");
+		userRequestDTO.setUserId("johndoe");
+		userRequestDTO.setPassword("welcome");
 		
-		ResponseEntity<?> response = controller.resetUserStatus("johndoe", principal);
+		doNothing().when(userServiceMock).resetUserStatus(userRequestDTO, principalMock);
+		
+		ResponseEntity<?> response = controller.resetUserStatus("johndoe", principalMock);
 		
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 	}
 	
 	@Test
-	@Ignore
 	public void changeUserPasswordTest() {
 		UserRequestDTO userRequestDTO = new UserRequestDTO();
 		userRequestDTO.setUserId("johndoe");
 		userRequestDTO.setPassword("welcome");
-		doNothing().when(userServiceMock).updateUser(any(UserRequestDTO.class), principal);
+		doNothing().when(userServiceMock).updateUser(userRequestDTO, principalMock);
 		
-		ResponseEntity<?> response = controller.changeUserPassword(userRequestDTO, principal);
+		ResponseEntity<?> response = controller.changeUserPassword(userRequestDTO, principalMock);
 		
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 	}
 	
 	@Test
-	@Ignore
 	public void deleteUserTest() {
-		doNothing().when(userServiceMock).deleteUser(any(UserRequestDTO.class), principal);
+		UserRequestDTO userRequestDTO = new UserRequestDTO();
+		userRequestDTO.setUserFullName("John Doe");
+		userRequestDTO.setRole("admin");
+		userRequestDTO.setUserId("johndoe");
+		userRequestDTO.setPassword("welcome");
 		
-		ResponseEntity<?> response = controller.deleteUser("johndoe", principal);
+		doNothing().when(userServiceMock).deleteUser(userRequestDTO, principalMock);
+		
+		ResponseEntity<?> response = controller.deleteUser("johndoe", principalMock);
 		
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 	}
