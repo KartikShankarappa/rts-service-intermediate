@@ -65,7 +65,7 @@ public class UserService {
 		User searchUser = userMapper.formatSearchEntry(userRequestDTO);
 		List<User> users = this.userDao.findByEntity(searchUser);
 		if(users != null && !users.isEmpty() && users.size() > 0) {
-			throw new ApiOperationException("Invalid request to create user profile as id " + userRequestDTO.getUserId() + "already exists in the system.");
+			throw new ApiOperationException("Invalid request to create user profile as id " + userRequestDTO.getUserId() + " already exists in the system.");
 		}
 
 		User user = userMapper.formatCreateEntry(userRequestDTO, principal);
