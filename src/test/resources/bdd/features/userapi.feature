@@ -1,12 +1,31 @@
+@RTStests
+@UserAPI
 Feature: User API Operations
+	As an administrator, I want the ability to add, remove, update, retrieve user information in the RTS system
 
-  @FirstScenario
-  Scenario: client makes call to all users using GET /gatewayapi/user
-    When the client calls /gatewayapi/user
-    Then the client receives status code of 200
-    And the client receives user with name usertest
+	Background
+		Given a client with an active Administrator account
 
-  Scenario: client makes call to specific user using GET /gatewayapi/user/userid
-    When the client calls /gatewayapi/user/userid
+      @wip
+  Scenario: Get a list of all users in the system
+    Given a user in the system
+    When the client issues a get request to the uri /users
     Then the client receives status code of 200
-    And the client receives name useridtest
+    And the client receives list of all users in the system
+
+  Scenario: Add a new user into the system
+    When the client issues a POST request to the uri /users with user details
+    Then the client receives status code of 200
+    And the new user is created in the system
+    
+  Scenario: Update a user details in the system
+  	Given a user in the system
+    When the client issues a PUT request to the uri /users with modified user details
+    Then the client receives status code of 200
+    And the user is updated in the system
+    
+  Scenario: Delete a user from the system
+    Given a user in the system
+    When the client issues a DELETE request to the uri /users
+    Then the client receives status code of 200
+    And the user is deleted from the system
