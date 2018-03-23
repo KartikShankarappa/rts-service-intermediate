@@ -4,7 +4,7 @@ Feature: User API Operations
 	As an administrator, I want the ability to add, remove, update, retrieve user information in the RTS system
 
 	Background
-		Given a client with an active Administrator account
+		Given a client with an active primary Administrator account
 
       @wip
   Scenario: Get a list of all users in the system
@@ -17,15 +17,34 @@ Feature: User API Operations
     When the client issues a POST request to the uri /users with user details
     Then the client receives status code of 200
     And the new user is created in the system
-    
-  Scenario: Update a user details in the system
+
+  Scenario: Get a user details from the system
+    When the client issues a GET request to the uri /users with user id
+    Then the client receives status code of 200
+    And the user details are retrieved from the system
+
+    @wip
+    Scenario: Inactivate a user in the system
+      Given an active user in the system
+      When the client issues a DELETE request to the uri /users with user id
+      Then the client receives status code of 200
+      And the user is inactivated in the system
+
+  Scenario: Reset a user password in the system
   	Given a user in the system
-    When the client issues a PUT request to the uri /users with modified user details
+    When the client issues a PUT request to the uri /users/userId/reset with password reset user details
     Then the client receives status code of 200
-    And the user is updated in the system
-    
-  Scenario: Delete a user from the system
+    And the user password is reset to default password in the system
+
+  @wip
+  Scenario: Change a user status to active in the system
+    Given an Inactive user in the system
+    When the client issues a PUT request to the uri /users/userId/activate with user id
+    Then the client receives status code of 200
+    And the user is activated in the system
+
+  Scenario: Change a user's default password in the system
     Given a user in the system
-    When the client issues a DELETE request to the uri /users
+    When the client issues a PUT request to the uri /users/ with new password and user details
     Then the client receives status code of 200
-    And the user is deleted from the system
+    And the user password is updated in the system
