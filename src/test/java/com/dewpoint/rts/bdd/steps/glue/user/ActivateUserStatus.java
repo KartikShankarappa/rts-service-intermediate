@@ -3,6 +3,7 @@ package com.dewpoint.rts.bdd.steps.glue.user;
 import com.dewpoint.rts.bdd.steps.helpers.BackgroundData;
 import com.dewpoint.rts.bdd.steps.helpers.DefaultBuilders;
 import com.dewpoint.rts.bdd.steps.helpers.GenericValidator;
+import com.dewpoint.rts.util.ApiConstants;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class ActivateUserStatus {
 
     @When ("^the client issues a PUT request to the uri /users/userId/activate with user id$")
     public void theClientIssuesAPUTRequestToTheUriUsersUserIdActivateWithUserId() throws Throwable {
-        backgroundData.an_active_admin ();
+        backgroundData.an_active_user (ApiConstants.ROLE_ADMINISTRATOR);
         headers = backgroundData.getHeaders ();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);

@@ -1,4 +1,4 @@
-@RTStests
+@RTSTests
 @UserAPI
 Feature: User API Operations
 	As an administrator, I want the ability to add, remove, update, retrieve user information in the RTS system
@@ -6,7 +6,6 @@ Feature: User API Operations
 	Background
 		Given a client with an active primary Administrator account
 
-      @wip
   Scenario: Get a list of all users in the system
     Given a user in the system
     When the client issues a get request to the uri /users
@@ -19,11 +18,11 @@ Feature: User API Operations
     And the new user is created in the system
 
   Scenario: Get a user details from the system
+      Given a user in the system
     When the client issues a GET request to the uri /users with user id
     Then the client receives status code of 200
     And the user details are retrieved from the system
 
-    @wip
     Scenario: Inactivate a user in the system
       Given an active user in the system
       When the client issues a DELETE request to the uri /users with user id
@@ -36,7 +35,6 @@ Feature: User API Operations
     Then the client receives status code of 200
     And the user password is reset to default password in the system
 
-  @wip
   Scenario: Change a user status to active in the system
     Given an Inactive user in the system
     When the client issues a PUT request to the uri /users/userId/activate with user id

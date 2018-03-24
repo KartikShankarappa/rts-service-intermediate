@@ -19,13 +19,12 @@ import java.sql.Statement;
 @CucumberOptions(
         glue = {"com.dewpoint.rts.bdd.steps"},
         features = {"classpath:bdd/features"},
-        tags = {"@RTStests"},
+        tags = {"@RTSTests"},
         snippets = SnippetType.CAMELCASE,
         format = {
                 "html:target/cucumber/rts/html",
                 "json:target/cucumber/rts/json"
         }
-
 )
 
 public class BddTestCoverage {
@@ -41,7 +40,9 @@ public class BddTestCoverage {
             ds.addDataSourceProperty ("url", "jdbc:mysql://localhost:3306/rts");
             ds.addDataSourceProperty ("user", "root");
             ds.addDataSourceProperty ("password", "Welcome1");
-            connection = ds.getConnection ( );
+            if(connection==null){
+                connection = ds.getConnection ( );
+            }
         }
 
         @AfterClass

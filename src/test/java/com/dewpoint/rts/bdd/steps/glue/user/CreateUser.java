@@ -4,6 +4,7 @@ import com.dewpoint.rts.bdd.steps.helpers.BackgroundData;
 import com.dewpoint.rts.bdd.steps.helpers.DefaultBuilders;
 import com.dewpoint.rts.bdd.steps.helpers.GenericValidator;
 import com.dewpoint.rts.dto.UserDTO;
+import com.dewpoint.rts.util.ApiConstants;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class CreateUser {
     @When("^the client issues a POST request to the uri /users with user details$")
     public void theClientIssuesAPOSTRequestToTheUriUsersWithUserDetails() throws Throwable {
 
-        backgroundData.an_active_admin ();
+        backgroundData.an_active_user (ApiConstants.ROLE_ADMINISTRATOR);
         headers = backgroundData.getHeaders ();
         headers.setContentType(MediaType.APPLICATION_JSON);
         UserDTO userDTO = DefaultBuilders.createDefaultUserDTO ();

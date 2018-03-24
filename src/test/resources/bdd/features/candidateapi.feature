@@ -1,11 +1,10 @@
-@RTStests
+@RTSTests
 @CandidateAPI
 Feature: Candidate API Operations
 	As a user, I want the ability to add, remove, update, retrieve candidate information in the RTS system
 
 	Background:
-		Given a client with an active primary user account
-
+		Given a client with an active primary User account
 
   Scenario: Get a list of all the candidates in the system
       Given there is at least one default candidate in the system
@@ -23,8 +22,7 @@ Feature: Candidate API Operations
     When the client issues a PUT request to the uri /candidates with updated candidate details
     Then the client receives status code of 200
     And the candidate profile is updated in the system
-
-  @wip
+    
   Scenario: Get the details of a candidate in the system by candidate id
   	Given a candidate in the system
     When the client issues a GET request to the uri /candidates with the candidate id

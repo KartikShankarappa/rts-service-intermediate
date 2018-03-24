@@ -4,6 +4,7 @@ import com.dewpoint.rts.bdd.steps.helpers.BackgroundData;
 import com.dewpoint.rts.bdd.steps.helpers.DefaultBuilders;
 import com.dewpoint.rts.bdd.steps.helpers.GenericValidator;
 import com.dewpoint.rts.dto.UserRequestDTO;
+import com.dewpoint.rts.util.ApiConstants;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class ChangeUserDefaultPassword {
     @When ("^the client issues a PUT request to the uri /users/ with new password and user details$")
     public void theClientIssuesAPUTRequestToTheUriUsersWithNewPasswordAndUserDetails() throws Throwable {
 
-        backgroundData.an_active_admin ();
+        backgroundData.an_active_user (ApiConstants.ROLE_ADMINISTRATOR);
         headers = backgroundData.getHeaders ();
         headers.setContentType(MediaType.APPLICATION_JSON);
         UserRequestDTO userRequestDTO = DefaultBuilders.updateDefaultUserDTO ();

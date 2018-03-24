@@ -17,6 +17,7 @@ public class DefaultBuilders {
     public static final String TEST_CANDIDATE_FIRST_NAME = "TestFirst";
     public static final String TEST_CANDIDATE_LAST_NAME = "TestLast";
     public static final String TEST_CANDIDATE_ID = "TestFirst_TestLast";
+    public static final String TEST_CANDIDATE_EMAIL = "hello@dewtest.com";
 
     public static CandidateDTO createDefaultCandidateDTO() {
 
@@ -33,8 +34,7 @@ public class DefaultBuilders {
         candidateDTO.setPhoneNumber ("123-456-7890");
         candidateDTO.setSkills ("Java, Spring, Hibernate, .NET");
         candidateDTO.setSource ("Referral");
-        candidateDTO.setEmail ("hello@dewtest.com");
-
+        candidateDTO.setEmail (DefaultBuilders.TEST_CANDIDATE_EMAIL);
         return candidateDTO;
     }
 
