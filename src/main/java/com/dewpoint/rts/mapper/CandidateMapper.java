@@ -20,6 +20,7 @@ public class CandidateMapper {
         candidate.setFirstName(candidateRequestDTO.getFirstName());
         candidate.setLastName(candidateRequestDTO.getLastName());
         candidate.setEmail(candidateRequestDTO.getEmail());
+        candidate.setPhoneNumber(candidateRequestDTO.getPhoneNumber());
         candidate.setSkills(candidateRequestDTO.getSkills());
         candidate.setSource(candidateRequestDTO.getSource());
         candidate.setLastJobTitle(candidateRequestDTO.getLastJobTitle());
@@ -57,6 +58,10 @@ public class CandidateMapper {
 
         if(!StringUtils.isEmpty(candidateRequestDTO.getEmail())) {
             candidate.setEmail(candidateRequestDTO.getEmail());
+        }
+        
+        if(!StringUtils.isEmpty(candidateRequestDTO.getPhoneNumber())) {
+            candidate.setPhoneNumber(candidateRequestDTO.getPhoneNumber());
         }
 
         if(!StringUtils.isEmpty(candidateRequestDTO.getSkills())) {
