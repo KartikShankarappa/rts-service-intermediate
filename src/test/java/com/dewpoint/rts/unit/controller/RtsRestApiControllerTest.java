@@ -212,7 +212,7 @@ public class RtsRestApiControllerTest {
 	}
 	
 	@Test
-	public void createCandidateTest() {
+	public void createCandidateTest() throws Exception {
 		CandidateRequestDTO candidateRequestDTO = new CandidateRequestDTO();
 		candidateRequestDTO.setFirstName("John");
 		candidateRequestDTO.setLastName("Snow");
@@ -228,7 +228,7 @@ public class RtsRestApiControllerTest {
 	}
 	
 	@Test
-	public void updateCandidateTest() {
+	public void updateCandidateTest() throws Exception {
 		CandidateRequestDTO candidateRequestDTO = new CandidateRequestDTO();
 		candidateRequestDTO.setFirstName("John");
 		candidateRequestDTO.setLastName("Snow");

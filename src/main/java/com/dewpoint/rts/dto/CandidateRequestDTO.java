@@ -20,6 +20,8 @@ public class CandidateRequestDTO {
     private String clientCity;
     private String clientState;
     private String clientZip;
+    private String fileType;
+    private String resumeContent;
 
     public String getApplicationStatus() {
         return applicationStatus;
@@ -141,7 +143,23 @@ public class CandidateRequestDTO {
         this.clientZip = clientZip;
     }
 
-    @Override
+    public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public String getResumeContent() {
+		return resumeContent;
+	}
+
+	public void setResumeContent(String resumeContent) {
+		this.resumeContent = resumeContent;
+	}
+
+	@Override
     public String toString() {
         return "CandidateRequestDTO{" +
                 "applicationStatus='" + applicationStatus + '\'' +
@@ -159,6 +177,8 @@ public class CandidateRequestDTO {
                 ", clientCity='" + clientCity + '\'' +
                 ", clientState='" + clientState + '\'' +
                 ", clientZip='" + clientZip + '\'' +
+                ", clientZip='" + fileType + '\'' +
+                ", clientZip='" + resumeContent + '\'' +
                 '}';
     }
 }

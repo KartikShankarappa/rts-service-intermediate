@@ -9,6 +9,7 @@ import com.dewpoint.rts.util.ApiValidation;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.Principal;
+import java.util.Base64;
 import java.util.logging.Logger;
 
 @Api(value="RTS", description="Operations pertaining to Resume Tracking System (RTS).")
@@ -39,6 +44,9 @@ public class RtsRestApiController {
 
 	@Autowired
 	private CandidateService candidateService;
+	
+	@Value("${document.directorylocation}")
+	private String directoryLocation;
 
 	@ApiOperation(value = "Returns all users (Active and InActive)")
 	@Secured(ApiConstants.ROLE_ADMINISTRATOR)
@@ -140,16 +148,30 @@ public class RtsRestApiController {
 
 	@ApiOperation(value = "Creates a new candidate profile")
 	@RequestMapping(value = "/candidates", method = RequestMethod.POST)
-	public ResponseEntity<?> createCandidate(@RequestBody CandidateRequestDTO requestDTO) {
+	public ResponseEntity<?> createCandidate(@RequestBody CandidateRequestDTO requestDTO) throws Exception {
 		ApiValidation.validateCreateCandidateRequest(requestDTO);
+		
+		// Chak, add the code here to fetch the candidate id so that it can be used as filename.
+		String candidateId = "khassan";
+		if(requestDTO.getResumeContent() != null && !requestDTO.getResumeContent().isEmpty()
+				&& requestDTO.getFileType() != null && !requestDTO.getFileType().isEmpty()) {
+			saveResumeToFileSystem(candidateId, requestDTO.getResumeContent(), requestDTO.getFileType());
+		}
 		candidateService.createCandidate(requestDTO);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Updates an existing candidate profile")
 	@RequestMapping(value = "/candidates", method = RequestMethod.PUT)
-	public ResponseEntity<?> updateCandidate(@RequestBody CandidateRequestDTO requestDTO) {
+	public ResponseEntity<?> updateCandidate(@RequestBody CandidateRequestDTO requestDTO) throws Exception{
 		ApiValidation.validateUpdateCandidateRequest(requestDTO);
+		
+		// Chak, add the code here to fetch the candidate id so that it can be used as filename.
+		String candidateId = "khassan";
+		if(requestDTO.getResumeContent() != null && !requestDTO.getResumeContent().isEmpty()
+				&& requestDTO.getFileType() != null && !requestDTO.getFileType().isEmpty()) {
+			saveResumeToFileSystem(candidateId, requestDTO.getResumeContent(), requestDTO.getFileType());
+		}
 		candidateService.updateCandidate(requestDTO);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -167,5 +189,12 @@ public class RtsRestApiController {
 		}
 		ApiValidation.validateSearchCandidatesResponse(responseDTO);
 		return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+	}
+	
+	private void saveResumeToFileSystem(String candidateId, String encodedrResumeContent, String fileType) throws IOException {
+		byte[] b1 = Base64.getDecoder().decode(encodedrResumeContent);
+		try(FileOutputStream fos = new FileOutputStream(directoryLocation + candidateId + "." + fileType)){
+			fos.write(b1);
+		}
 	}
 }
